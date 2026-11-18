@@ -1,0 +1,7 @@
+/__pycache__/*
+/elliptikus_adatok/results/*
+/spiral_adatok/results/*
+/*.aux
+/*.log
+/*.out
+/*.synctex.gz
