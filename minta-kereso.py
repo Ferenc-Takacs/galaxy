@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 df = pd.read_csv("osszesitett_sebesseg_profilok.csv")
 LANG = 0
+EPS = False
 
 # Külső gyűrűk (6-8.) metrikáinak kiszámítása minden galaxisra
 records = []
@@ -53,7 +54,9 @@ giant_sp = sp_meta[(sp_meta['mass'] > 6e10) & (sp_meta['vm_outer'] > 240)].sort_
 typ_el = el_meta[el_meta['anom_mert'].between(1.7, 2.2)].sort_values('rel_err').iloc[0]
 
 # 4. Kepler-szerű elliptikus galaxis (legkisebb mért anomália arány az elliptikusok között)
-kep_el = el_meta.sort_values('anom_mert').iloc[0]
+#kep_el = el_meta.sort_values('anom_mert').iloc[0]
+# 4. Valódi, nagy tömegű Kepler-szerű elliptikus galaxis (M_* > 3e10 M_sun, anomália 1.0 - 1.35 között)
+kep_el = el_meta[(el_meta['mass'] > 3e10) & (el_meta['anom_mert'].between(1.0, 1.35))].sort_values('anom_mert').iloc[0]
 
 kivalasztottak = [
     (["Typical Spiral Galaxy","Tipikus Spirál Galaxis"], typ_sp),
@@ -115,6 +118,11 @@ for ax, (cim, item) in zip(axes_flat, kivalasztottak):
     ax.legend(fontsize=8.5, loc='lower right')
 
 plt.tight_layout()
-txt = ["case_studies_en.png","case_studies_hu.png"]
-fig.savefig(txt[LANG], dpi=300)
-print(f"\nEsettanulmányi ábra elmentve (300 DPI): {txt[LANG]}")
+if EPS :
+    txt = ["f03a.eps","f03b.eps"]
+    fig.savefig(txt[LANG], format="eps", bbox_inches="tight")
+    print(f"\nEsettanulmányi ábra elmentve: {txt[LANG]}")
+else :
+    txt = ["case_studies_en.png","case_studies_hu.png"]
+    fig.savefig(txt[LANG], dpi=300)
+    print(f"\nEsettanulmányi ábra elmentve (300 DPI): {txt[LANG]}")

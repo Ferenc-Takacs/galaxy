@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 df = pd.read_csv("osszesitett_sebesseg_profilok.csv")
 print(f"\nBetöltött galaxisok összesen: {len(df)} db")
 
-LANG = 1
+LANG = 0
+EPS = False
 
 spiral = df[df['kategoria'].str.contains('Spirál', na=False)].copy()
 elliptikus = df[df['kategoria'].str.contains('Elliptikus', na=False)].copy()
@@ -52,7 +53,21 @@ spiral = szamol_kulso_atlagok(spiral, mod="spiral")
 elliptikus = szamol_kulso_atlagok(elliptikus, mod="elliptikus")
 
 sp_tiszta = spiral.dropna(subset=['V_mert_kulso', 'V_kep_kulso', 'V_mod_kulso', 'csillagtomeg_mnap'])
+
+#el_tiszta = elliptikus.dropna(subset=['V_mert_kulso', 'V_kep_kulso', 'V_mod_kulso', 'csillagtomeg_mnap'])
+#el_tiszta = elliptikus.dropna(subset=['V_mert_kulso', 'V_kep_kulso', 'V_mod_kulso', 'csillagtomeg_mnap'])
+#el_tiszta = el_tiszta[(el_tiszta['V_mert_kulso'] >= 100.0) & (el_tiszta['csillagtomeg_mnap'] >= 1e10)]
+
 el_tiszta = elliptikus.dropna(subset=['V_mert_kulso', 'V_kep_kulso', 'V_mod_kulso', 'csillagtomeg_mnap'])
+# Kizárjuk a műszeres felbontás alatti (<100 km/s) és a kísérőgalaxis által megzavart (>480 km/s) profilokat,
+# valamint azokat, ahol a külső diszperzió irreálisan (>20%-kal) nagyobb a 2. gyűrűben mért értéknél:
+v_belso_el = np.sqrt(el_tiszta['v_csillag_kms_2'].fillna(0)**2 + 2.0 * el_tiszta['sigma_kms_2']**2)
+el_tiszta = el_tiszta[
+    (el_tiszta['V_mert_kulso'].between(100.0, 480.0)) &
+    (el_tiszta['csillagtomeg_mnap'] >= 1e10) &
+    (el_tiszta['V_mert_kulso'] <= 1.20 * v_belso_el)
+]
+
 
 if len(sp_tiszta) > 1:
     korr_sp = np.corrcoef(sp_tiszta['V_mert_kulso'], sp_tiszta['V_mod_kulso'])[0, 1]
@@ -166,8 +181,13 @@ if len(ossz_tiszta) > 1:
     ax.legend(fontsize=8.5)
 
     plt.tight_layout()
-    txt = ["model_statistics_en.png","model_statistics_hu.png"]
-    fig.savefig(txt[LANG], dpi=300)
-    print(f"\nStatisztikai ábra elmentve (300 DPI): {txt[LANG]}")
+    if EPS :
+        txt = ["f01a.eps","f01b.eps"]
+        fig.savefig(txt[LANG], format="eps", bbox_inches="tight")
+        print(f"\nStatisztikai ábra elmentve: {txt[LANG]}")
+    else :
+        txt = ["model_statistics_en.png","model_statistics_hu.png"]
+        fig.savefig(txt[LANG], dpi=300)
+        print(f"\nStatisztikai ábra elmentve (300 DPI): {txt[LANG]}")
 
 

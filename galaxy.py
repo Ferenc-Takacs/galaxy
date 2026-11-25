@@ -11,12 +11,14 @@ from astropy.io import fits
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+LANG = 0 
+
 # Indexkonstansok a FITS csatornákhoz
 IDX0 = 0
 IDX1 = 1
 IDX2 = 2
 IDX3 = 3
-MINTA_DB = 50
+MINTA_DB = 221
 
 # Fizikai állandók (h = 0.7 kozmológiával)
 H_PARAM = 0.7
@@ -30,11 +32,10 @@ R_REF_RATIO_ELLIPT = 0.1    # Galaxismérettel skálázódó belső referenciasu
 
 # Hálózati kapcsolók (offline futtatáshoz False)
 DOWNLOAD_IMAGES = False
-DOWNLOAD_FITS = False
+DOWNLOAD_FITS = True
 USE_SIMBAD = True
 
 URL_MORPH = "https://sdss.org"
-LANG = 0 
 
 def tisztit_szoveg(oszlop):
     return [x.decode('utf-8').strip() if isinstance(x, bytes) else str(x).strip() for x in oszlop]

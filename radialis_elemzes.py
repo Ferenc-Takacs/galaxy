@@ -7,6 +7,7 @@ BETA_W = 0.400
 R_REF_FIX = 2.0
 
 LANG = 0
+EPS = False
 
 df = pd.read_csv("osszesitett_sebesseg_profilok.csv")
 spiral = df[df['kategoria'].str.contains('Spirál', na=False)].copy()
@@ -183,8 +184,12 @@ if LANG == 0 :
     ax.legend()
 
     plt.tight_layout()
-    fig.savefig("radial_profiles_en.png", dpi=300)
-    print("\nSugárirányú ábra elmentve (300 DPI): radial_profiles_en.png")
+    if EPS :
+        fig.savefig("f02a.eps", format="eps", bbox_inches="tight")
+        print("\nSugárirányú elemző ábra elmentve: f02a.eps")
+    else :
+        fig.savefig("radial_profiles_en.png.png", dpi=300)
+        print("\nSugárirányú elemző ábra elmentve: radial_profiles_en.png")
 
 
 if LANG == 1 :
@@ -235,6 +240,10 @@ if LANG == 1 :
     ax.legend()
 
     plt.tight_layout()
-    fig.savefig("radial_profiles_hu.png.png", dpi=150)
-    print("\nSugárirányú elemző ábra elmentve: radial_profiles_hu.png")
+    if EPS :
+        fig.savefig("f02b.eps", format="eps", bbox_inches="tight")
+        print("\nSugárirányú elemző ábra elmentve: f02b.eps")
+    else :
+        fig.savefig("radial_profiles_hu.png.png", dpi=300)
+        print("\nSugárirányú elemző ábra elmentve: radial_profiles_hu.png")
     
